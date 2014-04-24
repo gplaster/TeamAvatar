@@ -13,7 +13,7 @@
 
 #include <vector>
 #include "GLSL_helper.h"
-#define MAX_PLAYERS 2
+#define MAX_PLAYERS 1
 
 GameObject players[MAX_PLAYERS];
 std::vector<GameObject> env;
@@ -122,39 +122,39 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
 
 void SetupScene() {
 	/* environment */
-	GameObject ground = CubeObject();
-	ground.scale = glm::vec3(35.0f, 1.0f, 2.0f);
-	env.push_back(ground);
-	GameObject platform = CubeObject();
-	platform.scale = glm::vec3(4.0f, 0.15f, 2.0f);
-	platform.position = glm::vec3(3.0f, 6.5f, 0.0f);
-	env.push_back(platform);
+	//GameObject ground = CubeObject();
+	//ground.scale = glm::vec3(35.0f, 1.0f, 2.0f);
+	//env.push_back(ground);
+	//GameObject platform = CubeObject();
+	//platform.scale = glm::vec3(4.0f, 0.15f, 2.0f);
+	//platform.position = glm::vec3(3.0f, 6.5f, 0.0f);
+	//env.push_back(platform);
 
 	/* characters */
-	GameObject p1 = CubeObject();
-	p1.scale = glm::vec3(0.5f, 2.0f, 0.5f);
+	GameObject p1 = GameObject();
+	//p1.scale = glm::vec3(0.5f, 2.0f, 0.5f);
+	p1.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	p1.position = glm::vec3(-5.0f, 4.5f, 0.0f);
+	p1.setupVertices("astro.dae");
 	players[0] = p1;
 
-	/* test stuff for assimp */
-	//p1.setupVertices("untitled.dae");
-
-	GameObject p2 = CubeObject();
-	p2.scale = glm::vec3(0.5f, 2.0f, 0.5f);
-	p2.position = glm::vec3(5.0f, 4.5f, 0.0f);
-	players[1] = p2;
+	//GameObject p2 = CubeObject();
+	//p2.scale = glm::vec3(0.5f, 2.0f, 0.5f);
+	//p2.position = glm::vec3(5.0f, 4.5f, 0.0f);
+	//players[1] = p2;
 }
 
 void ProcessMovement() {
 	/* player 1 */
 	if (W_key && !S_key) {					//up
 		if (players[0].velocity.y == 0.0f) {
-			players[0].velocity.y = 2.5f;
+			//players[0].velocity.y = 2.5f;
+			players[0].position.y += 0.015;
 			players[0].falling = true;
 		}
 	}
 	else if (!W_key && S_key) {				//down
-
+		players[0].position.y -= 0.015;
 	}
 	else {									//no vertical
 
@@ -216,7 +216,6 @@ void CameraPos() {
 	else if (dist > MAX_DIST) dist = MAX_DIST;
 
 	float ratio = (dist - MIN_DIST) / (MAX_DIST - MIN_DIST);
-	printf("current ratio is: %f\n", ratio);
 
 	eye.z = DEF_CAM_Z + (ratio * 8.0f);
 }
@@ -227,7 +226,7 @@ void GameLoop(int dt) {
 	glm::vec3 oldPos;
 	for (int i = 0; i < MAX_PLAYERS; i++) {
 		if (players[i].falling) {
-			players[i].velocity.y -= 0.007f;
+			//players[i].velocity.y -= 0.007f;
 		}
 		else {
 			players[i].velocity.y = 0.0f;

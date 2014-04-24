@@ -20,8 +20,8 @@ glm::vec3 lightPos = glm::vec3(0.0f, 3.0f, -5.0f);
 
 float MIN_DIST = 10.0f;
 float MAX_DIST = 30.0f;
-float MIN_CAM_X = -20.0f;
-float MAX_CAM_X = 20.0f;
+float MIN_CAM_X = -15.0f;
+float MAX_CAM_X = 15.0f;
 
 float DEF_CAM_X = 0.0f;
 float DEF_CAM_Y = 6.0f;

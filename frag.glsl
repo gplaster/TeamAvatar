@@ -27,6 +27,7 @@ void main() {
             q_intensity = 1.0;
       }
 
-      gl_FragColor = vec4(dColor * q_intensity, 1.0);
+      //gl_FragColor = vec4(dColor * q_intensity, 1.0);
+	  gl_FragColor = vec4(0.7, 0.7, 0.7, 1.0);
    }
 }
