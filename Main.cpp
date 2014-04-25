@@ -13,7 +13,7 @@
 
 #include <vector>
 #include "GLSL_helper.h"
-#define MAX_PLAYERS 1
+#define MAX_PLAYERS 2
 
 GameObject players[MAX_PLAYERS];
 std::vector<GameObject> env;
@@ -43,6 +43,24 @@ void Render() {
 	safe_glUniform3f(h_uLPos, lightPos.x, lightPos.y, lightPos.z);
 	//camera position
 	safe_glUniform3f(h_uCameraPos, eye.x, eye.y, eye.z);
+
+	/* cull front faces and draw outline */
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	safe_glUniform1f(h_uOutline, 1.0f);
+
+	for (std::vector<GameObject>::iterator it = env.begin(); it != env.end(); ++it) {
+		it->render();
+	}
+
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		players[i].render();
+	}
+	
+
+	/* cull back faces and fill in */
+	glCullFace(GL_BACK);
+	safe_glUniform1f(h_uOutline, 0.0f);
 
 	for (std::vector<GameObject>::iterator it = env.begin(); it != env.end(); ++it) {
 		it->render();
@@ -112,7 +130,7 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
 	h_uViewMatrix = safe_glGetUniformLocation(ShadeProg, "uViewMatrix");
 	h_uModelMatrix = safe_glGetUniformLocation(ShadeProg, "uModelMatrix");
 	h_uLPos = safe_glGetUniformLocation(ShadeProg, "uLPos");
-	h_uCameraPos = safe_glGetUniformLocation(ShadeProg, "cameraPos");
+	//h_uCameraPos = safe_glGetUniformLocation(ShadeProg, "cameraPos");
 	h_uCol = safe_glGetUniformLocation(ShadeProg, "dColor");
 	h_uOutline = safe_glGetUniformLocation(ShadeProg, "uOutline");
 
@@ -122,33 +140,40 @@ int InstallShader(const GLchar *vShaderName, const GLchar *fShaderName) {
 
 void SetupScene() {
 	/* environment */
-	//GameObject ground = CubeObject();
-	//ground.scale = glm::vec3(35.0f, 1.0f, 2.0f);
-	//env.push_back(ground);
-	//GameObject platform = CubeObject();
-	//platform.scale = glm::vec3(4.0f, 0.15f, 2.0f);
-	//platform.position = glm::vec3(3.0f, 6.5f, 0.0f);
-	//env.push_back(platform);
+	GameObject ground = GameObject();
+	ground.setupVertices("untitled.dae");
+	ground.scale = glm::vec3(35.0f, 1.0f, 2.0f);
+	ground.color = glm::vec3(0.0f, 0.5f, 0.5f);
+	env.push_back(ground);
+	GameObject platform = GameObject();
+	platform.scale = glm::vec3(4.0f, 0.15f, 2.0f);
+	platform.position = glm::vec3(3.0f, 6.5f, 0.0f);
+	platform.setupVertices("untitled.dae");
+	platform.color = glm::vec3(0.f, 0.5f, 0.5f);
+	env.push_back(platform);
 
 	/* characters */
 	GameObject p1 = GameObject();
-	//p1.scale = glm::vec3(0.5f, 2.0f, 0.5f);
-	p1.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	p1.scale = glm::vec3(0.5f, 2.0f, 0.5f);
 	p1.position = glm::vec3(-5.0f, 4.5f, 0.0f);
+	p1.scale = glm::vec3(0.5f, 0.5, 0.5f);
 	p1.setupVertices("astro.dae");
+	p1.color = glm::vec3(0.2f, 0.8f, 0.1f);
 	players[0] = p1;
 
-	//GameObject p2 = CubeObject();
-	//p2.scale = glm::vec3(0.5f, 2.0f, 0.5f);
-	//p2.position = glm::vec3(5.0f, 4.5f, 0.0f);
-	//players[1] = p2;
+	GameObject p2 = GameObject();
+	p2.scale = glm::vec3(0.5f, 2.0f, 0.5f);
+	p2.position = glm::vec3(5.0f, 4.5f, 0.0f);
+	p2.setupVertices("untitled.dae");
+	p2.color = glm::vec3(0.8f, 0.2f, 0.1f);
+	players[1] = p2;
 }
 
 void ProcessMovement() {
 	/* player 1 */
 	if (W_key && !S_key) {					//up
 		if (players[0].velocity.y == 0.0f) {
-			//players[0].velocity.y = 2.5f;
+			players[0].velocity.y = 2.5f;
 			players[0].position.y += 0.015;
 			players[0].falling = true;
 		}
@@ -161,9 +186,11 @@ void ProcessMovement() {
 	}
 	if (A_key && !D_key) {					//left
 		players[0].velocity.x = -1.5f;
+		players[0].rotation = (int)(players[0].rotation + 1.0f) % 360;
 	}
 	else if (!A_key && D_key) {				//right
 		players[0].velocity.x = 1.5f;
+		players[0].rotation = (int)(players[0].rotation - 1.0f) % 360;
 	}
 	else {									//no horizontal
 		players[0].velocity.x = 0.0f;
@@ -226,7 +253,7 @@ void GameLoop(int dt) {
 	glm::vec3 oldPos;
 	for (int i = 0; i < MAX_PLAYERS; i++) {
 		if (players[i].falling) {
-			//players[i].velocity.y -= 0.007f;
+			players[i].velocity.y -= 0.007f;
 		}
 		else {
 			players[i].velocity.y = 0.0f;

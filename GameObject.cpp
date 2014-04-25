@@ -167,7 +167,7 @@ void GameObject::render() {
 	safe_glUniform3f(h_uCol, color.x, color.y, color.z);
 
 	/* outline for cel shading*/
-	safe_glUniform1f(h_uOutline, 0.0f);
+	//safe_glUniform1f(h_uOutline, 0.0f);
 
 	for (int i = 0; i < IBOLen.size(); i++) {
 		/* setting vertices */

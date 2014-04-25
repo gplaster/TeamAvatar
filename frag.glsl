@@ -4,7 +4,6 @@ uniform mat4 uProjMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
 uniform vec3 uLPos;
-uniform vec3 cameraPos;
 uniform float uOutline;
 
 varying vec4 fNormal;
@@ -17,6 +16,7 @@ void main() {
    
    if(uOutline > 0.5) {
       gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+	  //gl_FragColor = vec4(fNormal.x, fNormal.y, fNormal.z, 1.0);
    }
    else {
       //calculate light vector
@@ -27,7 +27,6 @@ void main() {
             q_intensity = 1.0;
       }
 
-      //gl_FragColor = vec4(dColor * q_intensity, 1.0);
-	  gl_FragColor = vec4(0.7, 0.7, 0.7, 1.0);
+      gl_FragColor = vec4(dColor * q_intensity, 1.0);
    }
 }

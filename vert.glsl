@@ -7,7 +7,6 @@ uniform mat4 uProjMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
 uniform vec3 uLPos;
-uniform vec3 cameraPos;
 uniform float uOutline;
 
 varying vec4 fNormal;
